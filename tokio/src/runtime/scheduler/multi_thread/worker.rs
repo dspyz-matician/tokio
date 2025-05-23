@@ -280,6 +280,7 @@ pub(super) fn create(
     let (inject, inject_synced) = inject::Shared::new();
 
     let remotes_len = remotes.len();
+    let print_spawn_backtrace = config.print_spawn_backtrace;
     let handle = Arc::new(Handle {
         task_hooks: TaskHooks::from_config(&config),
         shared: Shared {
@@ -301,6 +302,7 @@ pub(super) fn create(
         driver: driver_handle,
         blocking_spawner,
         seed_generator,
+        print_spawn_backtrace,
     });
 
     let mut launch = Launch(vec![]);

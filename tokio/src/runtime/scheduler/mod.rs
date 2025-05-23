@@ -138,11 +138,24 @@ cfg_rt! {
             }
         }
 
+        fn print_spawn_backtrace(&self) -> bool {
+            match self {
+                Handle::CurrentThread(h) => h.print_spawn_backtrace,
+
+                #[cfg(feature = "rt-multi-thread")]
+                Handle::MultiThread(h) => h.print_spawn_backtrace,
+            }
+        }
+
         pub(crate) fn spawn<F>(&self, future: F, id: Id) -> JoinHandle<F::Output>
         where
             F: Future + Send + 'static,
             F::Output: Send + 'static,
         {
+            let capture = std::backtrace::Backtrace::capture();
+            if self.print_spawn_backtrace() {
+                println!("spawned task at {capture}");
+            }
             match self {
                 Handle::CurrentThread(h) => current_thread::Handle::spawn(h, future, id),
 

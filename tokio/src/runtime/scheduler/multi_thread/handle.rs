@@ -32,6 +32,8 @@ pub(crate) struct Handle {
 
     /// User-supplied hooks to invoke for things
     pub(crate) task_hooks: TaskHooks,
+
+    pub(crate) print_spawn_backtrace: bool,
 }
 
 impl Handle {
