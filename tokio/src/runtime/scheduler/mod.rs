@@ -140,10 +140,25 @@ cfg_rt! {
 
         fn print_spawn_backtrace(&self) -> bool {
             match self {
-                Handle::CurrentThread(h) => h.print_spawn_backtrace,
+                Handle::CurrentThread(_) => false,
 
                 #[cfg(feature = "rt-multi-thread")]
-                Handle::MultiThread(h) => h.print_spawn_backtrace,
+                Handle::MultiThread(_) => false,
+
+                #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
+                Handle::MultiThreadAlt(h) => h.print_spawn_backtrace(),
+            }
+        }
+
+        fn insert_backtrace(&self, id: Id, backtrace: std::backtrace::Backtrace) {
+            match self {
+                Handle::CurrentThread(_) => unimplemented!(),
+
+                #[cfg(feature = "rt-multi-thread")]
+                Handle::MultiThread(_) => unimplemented!(),
+
+                #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
+                Handle::MultiThreadAlt(h) => h.insert_backtrace(id, backtrace),
             }
         }
 
@@ -152,9 +167,10 @@ cfg_rt! {
             F: Future + Send + 'static,
             F::Output: Send + 'static,
         {
-            let capture = std::backtrace::Backtrace::capture();
             if self.print_spawn_backtrace() {
+                let capture = std::backtrace::Backtrace::capture();
                 println!("spawned task at {capture}");
+                self.insert_backtrace(id, capture);
             }
             match self {
                 Handle::CurrentThread(h) => current_thread::Handle::spawn(h, future, id),

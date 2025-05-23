@@ -51,8 +51,6 @@ pub(crate) struct Handle {
 
     /// If this is a `LocalRuntime`, flags the owning thread ID.
     pub(crate) local_tid: Option<ThreadId>,
-
-    pub(crate) print_spawn_backtrace: bool,
 }
 
 /// Data required for executing the scheduler. The struct is passed around to
@@ -143,7 +141,6 @@ impl CurrentThread {
             .global_queue_interval
             .unwrap_or(DEFAULT_GLOBAL_QUEUE_INTERVAL);
 
-        let print_spawn_backtrace = config.print_spawn_backtrace;
         let handle = Arc::new(Handle {
             task_hooks: TaskHooks {
                 task_spawn_callback: config.before_spawn.clone(),
@@ -165,7 +162,6 @@ impl CurrentThread {
             blocking_spawner,
             seed_generator,
             local_tid,
-            print_spawn_backtrace,
         });
 
         let core = AtomicCell::new(Some(Box::new(Core {

@@ -74,7 +74,8 @@ impl Id {
         }
     }
 
-    pub(crate) fn as_u64(&self) -> u64 {
+    /// Foobar
+    pub fn as_u64(&self) -> u64 {
         self.0.get()
     }
 }

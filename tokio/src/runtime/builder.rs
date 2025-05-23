@@ -1736,6 +1736,7 @@ cfg_rt_multi_thread! {
                         disable_lifo_slot: self.disable_lifo_slot,
                         seed_generator: seed_generator_1,
                         metrics_poll_count_histogram: self.metrics_poll_count_histogram_builder(),
+                        print_spawn_backtrace: self.print_spawn_backtrace,
                     },
                 );
 

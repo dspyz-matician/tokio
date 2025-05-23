@@ -56,6 +56,8 @@
 //! the inject queue indefinitely. This would be a ref-count cycle and a memory
 //! leak.
 
+use dashmap::DashMap;
+
 use crate::loom::sync::{Arc, Mutex};
 use crate::runtime;
 use crate::runtime::scheduler::multi_thread::{
@@ -65,10 +67,11 @@ use crate::runtime::scheduler::{inject, Defer, Lock};
 use crate::runtime::task::{OwnedTasks, TaskHarnessScheduleHooks};
 use crate::runtime::{blocking, driver, scheduler, task, Config, SchedulerMetrics, WorkerMetrics};
 use crate::runtime::{context, TaskHooks};
-use crate::task::coop;
+use crate::task::{coop, Id};
 use crate::util::atomic_cell::AtomicCell;
 use crate::util::rand::{FastRand, RngSeedGenerator};
 
+use std::backtrace::Backtrace;
 use std::cell::RefCell;
 use std::task::Waker;
 use std::thread;
@@ -302,7 +305,6 @@ pub(super) fn create(
         driver: driver_handle,
         blocking_spawner,
         seed_generator,
-        print_spawn_backtrace,
     });
 
     let mut launch = Launch(vec![]);

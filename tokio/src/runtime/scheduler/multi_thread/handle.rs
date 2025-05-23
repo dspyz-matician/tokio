@@ -32,8 +32,6 @@ pub(crate) struct Handle {
 
     /// User-supplied hooks to invoke for things
     pub(crate) task_hooks: TaskHooks,
-
-    pub(crate) print_spawn_backtrace: bool,
 }
 
 impl Handle {
@@ -66,6 +64,10 @@ impl Handle {
 
         handle
     }
+
+    // pub(crate) fn insert_backtrace(&self, id: task::Id, backtrace: Backtrace) {
+    //     self.shared.trace_mapping.insert(id, backtrace);
+    // }
 }
 
 cfg_unstable! {
