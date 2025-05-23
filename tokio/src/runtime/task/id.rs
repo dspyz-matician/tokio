@@ -78,4 +78,9 @@ impl Id {
     pub fn as_u64(&self) -> u64 {
         self.0.get()
     }
+
+    /// Foobar
+    pub fn try_from_u64(id: u64) -> Option<Self> {
+        NonZeroU64::new(id).map(Self)
+    }
 }
