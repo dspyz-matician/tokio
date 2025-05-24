@@ -130,9 +130,6 @@ pub struct Builder {
     /// Configures the task poll count histogram
     pub(super) metrics_poll_count_histogram: HistogramBuilder,
 
-    /// Foobar
-    pub print_spawn_backtrace: bool,
-
     #[cfg(tokio_unstable)]
     pub(super) unhandled_panic: UnhandledPanic,
 }
@@ -345,8 +342,6 @@ impl Builder {
             metrics_poll_count_histogram: HistogramBuilder::default(),
 
             disable_lifo_slot: false,
-
-            print_spawn_backtrace: false,
         }
     }
 
@@ -1527,7 +1522,6 @@ impl Builder {
                 disable_lifo_slot: self.disable_lifo_slot,
                 seed_generator: seed_generator_1,
                 metrics_poll_count_histogram: self.metrics_poll_count_histogram_builder(),
-                print_spawn_backtrace: self.print_spawn_backtrace,
             },
             local_tid,
         );
@@ -1682,7 +1676,6 @@ cfg_rt_multi_thread! {
                     disable_lifo_slot: self.disable_lifo_slot,
                     seed_generator: seed_generator_1,
                     metrics_poll_count_histogram: self.metrics_poll_count_histogram_builder(),
-                    print_spawn_backtrace: self.print_spawn_backtrace,
                 },
             );
 
@@ -1736,7 +1729,6 @@ cfg_rt_multi_thread! {
                         disable_lifo_slot: self.disable_lifo_slot,
                         seed_generator: seed_generator_1,
                         metrics_poll_count_histogram: self.metrics_poll_count_histogram_builder(),
-                        print_spawn_backtrace: self.print_spawn_backtrace,
                     },
                 );
 

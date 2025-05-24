@@ -22,10 +22,7 @@ use crate::util::trace::SpawnMeta;
 
 use std::future::Future;
 use std::marker::PhantomData;
-use std::sync::Arc;
 use std::{error, fmt, mem};
-
-use super::task::Id;
 
 /// Runtime context guard.
 ///
@@ -306,17 +303,6 @@ impl Handle {
             self.block_on_inner(Box::pin(future), SpawnMeta::new_unnamed(fut_size))
         } else {
             self.block_on_inner(future, SpawnMeta::new_unnamed(fut_size))
-        }
-    }
-
-    /// Foobar
-    pub fn backtrace_for_id(&self, id: Id) -> Option<Arc<std::backtrace::Backtrace>> {
-        match &self.inner {
-            scheduler::Handle::CurrentThread(_) => None,
-            #[cfg(feature = "rt-multi-thread")]
-            scheduler::Handle::MultiThread(handle) => handle.backtrace_for_id(id),
-            #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
-            scheduler::Handle::MultiThreadAlt(_) => None,
         }
     }
 
