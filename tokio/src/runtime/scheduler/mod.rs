@@ -169,7 +169,7 @@ cfg_rt! {
         {
             if self.print_spawn_backtrace() {
                 let capture = std::backtrace::Backtrace::capture();
-                println!("spawned task at {capture}");
+                println!("spawned task {id} at {capture}");
                 self.insert_backtrace(id, capture);
             }
             match self {
