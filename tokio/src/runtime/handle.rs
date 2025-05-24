@@ -314,9 +314,9 @@ impl Handle {
         match &self.inner {
             scheduler::Handle::CurrentThread(_) => None,
             #[cfg(feature = "rt-multi-thread")]
-            scheduler::Handle::MultiThread(_) => None,
+            scheduler::Handle::MultiThread(handle) => handle.backtrace_for_id(id),
             #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
-            scheduler::Handle::MultiThreadAlt(handle) => handle.backtrace_for_id(id),
+            scheduler::Handle::MultiThreadAlt(_) => None,
         }
     }
 

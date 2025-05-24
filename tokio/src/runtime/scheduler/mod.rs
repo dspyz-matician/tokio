@@ -143,10 +143,10 @@ cfg_rt! {
                 Handle::CurrentThread(_) => false,
 
                 #[cfg(feature = "rt-multi-thread")]
-                Handle::MultiThread(_) => false,
+                Handle::MultiThread(h) => h.print_spawn_backtrace(),
 
                 #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
-                Handle::MultiThreadAlt(h) => h.print_spawn_backtrace(),
+                Handle::MultiThreadAlt(_) => false,
             }
         }
 
@@ -155,10 +155,10 @@ cfg_rt! {
                 Handle::CurrentThread(_) => unimplemented!(),
 
                 #[cfg(feature = "rt-multi-thread")]
-                Handle::MultiThread(_) => unimplemented!(),
+                Handle::MultiThread(h) => h.insert_backtrace(id, backtrace),
 
                 #[cfg(all(tokio_unstable, feature = "rt-multi-thread"))]
-                Handle::MultiThreadAlt(h) => h.insert_backtrace(id, backtrace),
+                Handle::MultiThreadAlt(_) => unimplemented!(),
             }
         }
 

@@ -47,18 +47,6 @@ impl Handle {
         self.driver.unpark();
     }
 
-    pub(crate) fn print_spawn_backtrace(&self) -> bool {
-        self.shared.print_spawn_backtrace
-    }
-
-    pub(crate) fn backtrace_for_id(&self, id: task::Id) -> Option<Arc<std::backtrace::Backtrace>> {
-        self.shared.trace_mapping.get(&id).as_deref().cloned()
-    }
-
-    pub(crate) fn insert_backtrace(&self, id: task::Id, backtrace: std::backtrace::Backtrace) {
-        self.shared.trace_mapping.insert(id, Arc::new(backtrace));
-    }
-
     pub(super) fn bind_new_task<T>(me: &Arc<Self>, future: T, id: task::Id) -> JoinHandle<T::Output>
     where
         T: Future + Send + 'static,

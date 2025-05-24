@@ -56,8 +56,6 @@
 //! the inject queue indefinitely. This would be a ref-count cycle and a memory
 //! leak.
 
-use dashmap::DashMap;
-
 use crate::loom::sync::{Arc, Condvar, Mutex, MutexGuard};
 use crate::runtime;
 use crate::runtime::driver::Driver;
@@ -68,11 +66,10 @@ use crate::runtime::scheduler::{self, inject, Lock};
 use crate::runtime::task::{OwnedTasks, TaskHarnessScheduleHooks};
 use crate::runtime::{blocking, driver, task, Config, SchedulerMetrics, WorkerMetrics};
 use crate::runtime::{context, TaskHooks};
-use crate::task::{coop, Id};
+use crate::task::coop;
 use crate::util::atomic_cell::AtomicCell;
 use crate::util::rand::{FastRand, RngSeedGenerator};
 
-use std::backtrace::Backtrace;
 use std::cell::{Cell, RefCell};
 use std::task::Waker;
 use std::time::Duration;
@@ -172,10 +169,6 @@ pub(crate) struct Shared {
 
     /// Collects metrics from the runtime.
     pub(super) scheduler_metrics: SchedulerMetrics,
-
-    pub(crate) print_spawn_backtrace: bool,
-
-    pub(crate) trace_mapping: DashMap<Id, Arc<Backtrace>>,
 
     pub(super) worker_metrics: Box<[WorkerMetrics]>,
 
@@ -310,7 +303,6 @@ pub(super) fn create(
     let (idle, idle_synced) = Idle::new(cores, num_workers);
     let (inject, inject_synced) = inject::Shared::new();
 
-    let print_spawn_backtrace = config.print_spawn_backtrace;
     let handle = Arc::new(Handle {
         task_hooks: TaskHooks::from_config(&config),
         shared: Shared {
@@ -330,8 +322,6 @@ pub(super) fn create(
             trace_status: TraceStatus::new(num_cores),
             config,
             scheduler_metrics: SchedulerMetrics::new(),
-            trace_mapping: DashMap::new(),
-            print_spawn_backtrace,
             worker_metrics: worker_metrics.into_boxed_slice(),
             _counters: Counters,
         },

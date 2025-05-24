@@ -182,6 +182,10 @@ pub(crate) struct Shared {
 
     pub(super) worker_metrics: Box<[WorkerMetrics]>,
 
+    pub(crate) print_spawn_backtrace: bool,
+
+    pub(crate) trace_mapping: DashMap<Id, Arc<Backtrace>>,
+
     /// Only held to trigger some code on drop. This is used to get internal
     /// runtime metrics that can be useful when doing performance
     /// investigations. This does nothing (empty struct, no drop impl) unless
@@ -299,6 +303,8 @@ pub(super) fn create(
             trace_status: TraceStatus::new(remotes_len),
             config,
             scheduler_metrics: SchedulerMetrics::new(),
+            trace_mapping: DashMap::new(),
+            print_spawn_backtrace,
             worker_metrics: worker_metrics.into_boxed_slice(),
             _counters: Counters,
         },
